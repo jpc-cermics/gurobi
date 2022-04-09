@@ -341,6 +341,7 @@ int int_gurobi_solve(Stack stack, int rhs, int opt, int lhs)
   nsp_matrix_destroy(Lhs);
   if ( lb_local == TRUE) nsp_matrix_destroy(lb);
   if ( ub_local == TRUE) nsp_matrix_destroy(ub);
+
   if ( SemiCont != NULL) nsp_matrix_destroy(SemiCont);
 
   if ( columnType != NULL) nsp_string_destroy(&columnType);
