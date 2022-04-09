@@ -15,7 +15,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-load_toolbox('nspcplex');
+load_toolbox('nspgurobi');
 
 /////////////////////////////////////////////////////////////////////////////////
 // test 1-1:   max c'*x
@@ -27,7 +27,7 @@ A = [ 2 4 8  6;
 b = [100; 160;  20];
 c= [50; 40; 70; 80];
 
-[xopt,fopt,flag,lambda] = linprog_cplex(c,A,b,[],[],sense="max",loglevel=0);
+[xopt,fopt,flag,lambda] = linprog_gurobi(c,A,b,[],[],sense="max",loglevel=0);
 
 // exact sol, function value and basis information
 XM = [12;0;0;4]; FM = 920; final_basis = hash(aux = [1;3;3], str = [1;2;2;1]);
@@ -44,7 +44,7 @@ if abs((dot(lambda,b)-fopt)/fopt) >= 4*%eps then, pause, end
 A= [-1 -1; -1 2; -2 1];
 b=[-3; -5; 5];
 c=[1; 3];
-ok=execstr('[xopt,fopt,flag] = linprog_cplex(c,A,b,[],[],sense=""max"");',errcatch=%t);
+ok=execstr('[xopt,fopt,flag] = linprog_gurobi(c,A,b,[],[],sense=""max"");',errcatch=%t);
 if ok then pause;else lasterror();end 
 
 //////////////////////////////////////////////////////////////////////////////

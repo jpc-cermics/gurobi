@@ -17,7 +17,7 @@
 //
 // a set of examples compared with linprog 
 
-load_toolbox('nspcplex');
+load_toolbox('nspgurobi');
 
 // example 1 
 //-----------
@@ -41,7 +41,7 @@ if L'*b <> c'*xopt then pause;end
 if fopt <> c'*xopt then pause;end 
 if fopt <> 920 then pause;end 
 
-[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,[],[],sense="max");
+[xopt1,fopt1,flag1,extra1] = linprog_gurobi(c,A,b,[],[],sense="max");
 if norm(xopt-xopt1) >= 1.e-8 then pause;end 
 if norm(extra1- extra.lambda) >= 1.e-8 then pause;end 
 
@@ -54,7 +54,7 @@ lb = [0;0];
 ub = [10;10];
 
 [xopt,fopt,flag,extra] = linprog(c,A,b,[],[],ub=ub,lb=lb,sense="min");
-[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,[],[],ub=ub,lb=lb,sense="min");
+[xopt1,fopt1,flag1,extra1] = linprog_gurobi(c,A,b,[],[],ub=ub,lb=lb,sense="min");
 if norm(xopt-xopt1) >= 1.e-8 then pause;end 
 if norm(extra1- extra.lambda) >= 1.e-8 then pause;end 
 
@@ -70,7 +70,7 @@ lb = [0;0;0];
 ub = [40;%inf;%inf];
 
 [xopt,fopt,flag,extra] = linprog(c,A,b,Ae,be,ub=ub,lb=lb,sense="min");
-[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,Ae,be,ub=ub,lb=lb,sense="min");
+[xopt1,fopt1,flag1,extra1] = linprog_gurobi(c,A,b,Ae,be,ub=ub,lb=lb,sense="min");
 
 if norm(xopt-xopt1) >= 1.e-8 then pause;end 
 if norm(extra1- extra.lambda) >= 1.e-8 then pause;end 
@@ -99,7 +99,7 @@ optimalValue = 1428729.2857143;
 [xopt,fopt,flag,extra] = linprog(c,A,b,[],[],ub=ub,lb=lb,sense="max");
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
 
-[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max");
+[xopt1,fopt1,flag1,extra1] = linprog_gurobi(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max");
 if norm(xopt-xopt1) >= 1.e-8 then pause;end 
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 if norm(extra1- extra.lambda) >= 1.e-8 then pause;end 
@@ -125,7 +125,7 @@ optimalValue = 506.66666667 -cte ;
 [xopt,fopt,flag,extra] = linprog(c,A,b,[],[],ub=ub,lb=lb,sense="max");
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
 
-[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max");
+[xopt1,fopt1,flag1,extra1] = linprog_gurobi(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max");
 if norm(xopt-xopt1) >= 1.e-8 then pause;end 
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 if norm(extra1- extra.lambda) >= 1.e-8 then pause;end 
@@ -172,7 +172,7 @@ Al=A(Lq,:);bl=b(Lq);
 [xopt,fopt,flag,extra] = linprog(c,A,b,[],[],ub=ub,lb=lb,sense=sense);
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
 
-[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,sparse([]),[],ub=ub,lb=lb,sense=sense);
+[xopt1,fopt1,flag1,extra1] = linprog_gurobi(c,A,b,sparse([]),[],ub=ub,lb=lb,sense=sense);
 if norm(xopt-xopt1) >= 1.e-8 then pause;end 
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 // XXX if norm(extra1- extra.lambda) >= 1.e-8 then pause;end 
@@ -185,7 +185,7 @@ if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 [xopt,fopt,flag,extra] = linprog(c,Al,bl,Ae,be,ub=ub,lb=lb,sense=sense);
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
 
-[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,Al,bl,Ae,be,ub=ub,lb=lb,sense=sense);
+[xopt1,fopt1,flag1,extra1] = linprog_gurobi(c,Al,bl,Ae,be,ub=ub,lb=lb,sense=sense);
 if norm(xopt-xopt1) >= 1.e-8 then pause;end 
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 // if norm(extra1- extra.lambda) >= 1.e-8 then pause;end 
@@ -231,7 +231,7 @@ ctyp = smat_create(1,n,"B");
 [xopt,fopt,flag] = linprog(c,A,b,Ae,be,binprog=%t,sense=sense);
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
 
-[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,Ae,be,var_type=ctyp, sense=sense);
+[xopt1,fopt1,flag1,extra1] = linprog_gurobi(c,A,b,Ae,be,var_type=ctyp, sense=sense);
 // if norm(xopt-xopt1) >= 1.e-8 then pause;end 
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
@@ -269,7 +269,7 @@ ub1=ub;ub1(3:4)=1;
 [xopt,fopt,flag] = linprog(c,A,b,Ae,be,var_type=ctyp1,ub=ub1,lb=lb,sense=sense);
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
 
-[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,Ae,be,ub=ub,lb=lb, ...
+[xopt1,fopt1,flag1,extra1] = linprog_gurobi(c,A,b,Ae,be,ub=ub,lb=lb, ...
 					   var_type=ctyp, sense=sense);
 // here xopt and xopt1 are optimal but not the same
 // if norm(xopt-xopt1) >= 1.e-8 then pause;end 

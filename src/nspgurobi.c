@@ -32,7 +32,7 @@ double nsp_gurobi_dbl_max(void)
 
 
 
-/* creates a cplex problem and solve the problem.
+/* creates a gurobi problem and solve the problem.
  * If a filname is given the problem is also saved 
  * if save_only if true the problem is just saved.
  */ 
