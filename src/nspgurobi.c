@@ -42,7 +42,7 @@ int nsp_gurobi_solve(const char* problemName, int sense, int ncols, int nrows, i
 		    NspMatrix *lower, NspMatrix *upper, NspMatrix *Objective,
 		    NspIMatrix *Qmatbeg,NspIMatrix *Qmatcnt, NspIMatrix *Qmatind, NspMatrix *Qmatval, 
 		    NspMatrix *Rhs,const char *columnType,  NspMatrix *X,NspMatrix *Lambda,
-		    NspMatrix *RetCost,NspMatrix *Retcode,const char *rowType,
+		    NspMatrix *RetCost,NspMatrix *Retcode, char *rowType,
 		    int semiCount, int *semiIndex,NspHash *Options,int loglevel,
 		    const char *filename,int save_only)
 {
@@ -76,7 +76,7 @@ int nsp_gurobi_solve(const char* problemName, int sense, int ncols, int nrows, i
   /* Now copy the LP part of the problem data into the lp */
   error = GRBloadmodel(env, &model, "gc_pwl_c", colCount, rowCount,
                        objectSense, 0.0, objectCoeffs,
-		       NULL, rhsValues,
+		       rowType, rhsValues,
 		       matrixBegin, matrixCount, matrixIndex, matrixValues,
 		       lowerBounds, upperBounds,
 		       NULL, NULL, NULL);
