@@ -1,0 +1,10 @@
+Interface to gurobi linear and quadratic programming
+You need to fill in src/Makefile the two variables with
+your version of gurobi
+
+GUROBI=/home/jpc/gurobi951/linux64
+GUROBILIB=-lgurobi95
+
+jpc (2022)
+
+
