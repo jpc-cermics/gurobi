@@ -65,12 +65,13 @@ int nsp_gurobi_solve(const char* problemName, int sense, int ncols, int nrows, i
   double    objval;
   
   double *dj=NULL,*slack=NULL;
-  int solstat=0;
   int ret = FAIL;
 
   /* Create environment */
   error = GRBloadenv(&env, NULL);
+  if (error) goto QUIT;
 
+  error = GRBsetintparam(env, GRB_INT_PAR_OUTPUTFLAG, loglevel);
   if (error) goto QUIT;
 
   /* Now copy the LP part of the problem data into the lp */
@@ -88,27 +89,68 @@ int nsp_gurobi_solve(const char* problemName, int sense, int ncols, int nrows, i
   if (error) goto QUIT;
   
   /* Capture solution information */
-
+  
   error = GRBgetintattr(model, GRB_INT_ATTR_STATUS, &optimstatus);
   if (error) goto QUIT;
   
-  error = GRBgetdblattr(model, GRB_DBL_ATTR_OBJVAL, &objval);
-  if (error) goto QUIT;
-  /* 
-  error = GRBgetdblattrarray(model, GRB_DBL_ATTR_X, 0, 3, sol);
-  if (error) goto QUIT;
-  */
-  printf("\nOptimization complete\n");
-  if (optimstatus == GRB_OPTIMAL) {
-    printf("Optimal objective: %.4e\n", objval);
-  } else if (optimstatus == GRB_INF_OR_UNBD) {
-    printf("Model is infeasible or unbounded\n");
-  } else {
-    printf("Optimization was stopped early\n");
-  }
+  Retcode->R[0]= optimstatus;
+
+  switch ( optimstatus )
+    {
+    case GRB_OPTIMAL:
+      Sciprintf("Model is optimal\n");break;
+    case GRB_INFEASIBLE:
+      Sciprintf("Model is infeasible\n");break;
+    case GRB_INF_OR_UNBD:
+      Sciprintf("Model is infinite or unbounded\n");break;
+    case GRB_UNBOUNDED:
+      Sciprintf("Model is unbounded\n");break;
+    }
+
   
-  Retcode->R[0]= solstat; 
-  RetCost->R[0]= objval;
+  if (optimstatus == GRB_OPTIMAL)
+    {
+      error = GRBgetdblattr(model, GRB_DBL_ATTR_OBJVAL, &objval);
+      if (error) goto QUIT;
+
+      error = GRBgetdblattrarray(model, GRB_DBL_ATTR_X, 0, colCount,X->R );
+      if (error) goto QUIT;
+
+      if (  columnType ) 
+	{
+	  int i;
+	  /* no multipliers for mip */
+	  for ( i = 0 ; i < rowCount; i++)
+	    Lambda->R[i]=0.0;
+	}
+      else
+	{
+	  /* first the inequality constraints */
+	  error = GRBgetdblattrarray(model, GRB_DBL_ATTR_PI, neq, rowCount-neq, Lambda->R);
+	  if ( error ) {
+	    Scierror("Failed to get optimal pi values.\n");
+	    goto QUIT;
+	  }
+	  /* then the equality constraints */
+	  error = GRBgetdblattrarray(model, GRB_DBL_ATTR_PI,0, neq, Lambda->R+(rowCount-neq));
+	  if ( error ) {
+	    Scierror("Failed to get optimal pi values.\n");
+	    goto QUIT;
+	  }
+	}
+    
+      RetCost->R[0]= objval;
+    }
+  else
+    {
+      int i;
+      double d=0;d=1/d;
+      RetCost->R[0]= (sense == 0 ) ? + d: - d;
+      for ( i = 0 ; i < rowCount; i++) Lambda->R[i]=0.0;
+      for ( i = 0 ; i < colCount; i++) X->R[i]=0.0;
+
+    }
+      
   ret = OK ;
   
  QUIT:
@@ -117,7 +159,7 @@ int nsp_gurobi_solve(const char* problemName, int sense, int ncols, int nrows, i
   if ( slack != NULL) free(slack);
 
   if (error) {
-    printf("ERROR: %s\n", GRBgeterrormsg(env));
+    Scierror("Erro: %s\n", GRBgeterrormsg(env));
     ret = FAIL;
   }
 

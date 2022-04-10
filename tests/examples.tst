@@ -18,6 +18,13 @@
 // a set of examples compared with linprog 
 
 load_toolbox('nspgurobi');
+XXX
+[xopt1,fopt1,flag1,extra1] = linprog_gurobi(10,-1,0,[],[],sense="max");
+// model is infinite or unbounded
+// check that fopt1 = -%inf 
+[xopt1,fopt1,flag1,extra1] = linprog_gurobi(-10,[-1;1],[0;-3],[],[],sense="max");
+// Model is infeasible
+// check that fopt1 = -%inf
 
 // example 1 
 //-----------
@@ -169,26 +176,13 @@ Ae=A(Eq,:);be=b(Eq);
 Lq=find(ct == 'L');
 Al=A(Lq,:);bl=b(Lq);
 
-[xopt,fopt,flag,extra] = linprog(c,A,b,[],[],ub=ub,lb=lb,sense=sense);
-if abs(fopt - optimalValue) > 1.e-7 then pause;end
-
-[xopt1,fopt1,flag1,extra1] = linprog_gurobi(c,A,b,sparse([]),[],ub=ub,lb=lb,sense=sense);
-if norm(xopt-xopt1) >= 1.e-8 then pause;end 
-if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
-// XXX if norm(extra1- extra.lambda) >= 1.e-8 then pause;end 
-
-// [xopt1,fopt1,flag1,extra2] = linprog_clp(c,A,b,sparse([]),[],ub=ub,lb=lb,sense=sense);
-// if norm(xopt-xopt1) >= 1.e-8 then pause;end 
-// if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
-// if norm(extra2- extra.lambda) >= 1.e-8 then pause;end 
-
 [xopt,fopt,flag,extra] = linprog(c,Al,bl,Ae,be,ub=ub,lb=lb,sense=sense);
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
 
 [xopt1,fopt1,flag1,extra1] = linprog_gurobi(c,Al,bl,Ae,be,ub=ub,lb=lb,sense=sense);
 if norm(xopt-xopt1) >= 1.e-8 then pause;end 
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
-// if norm(extra1- extra.lambda) >= 1.e-8 then pause;end 
+if norm(extra1- extra.lambda) >= 1.e-8 then pause;end 
 
 // P0033
 //--------
