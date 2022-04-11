@@ -24,13 +24,15 @@
 #include <nsp/objects.h>
 #include <nsp/imatrix.h>
 #include "nspgurobi.h"
+#if defined(__linux__)
+#include <fcntl.h>
+#include <unistd.h>
+#endif
 
 double nsp_gurobi_dbl_max(void)
 {
   return  GRB_INFINITY;
 }
-
-
 
 /* creates a gurobi problem and solve the problem.
  * If a filname is given the problem is also saved 
@@ -67,8 +69,24 @@ int nsp_gurobi_solve(const char* problemName, int sense, int ncols, int nrows, i
   double *dj=NULL,*slack=NULL;
   int ret = FAIL;
 
-  /* Create environment */
-  error = GRBloadenv(&env, NULL);
+  /* Create environment: suppress printing when */
+  if ( loglevel == 0 )
+    {
+#if defined(__linux__)
+      int saved_stdout = dup(STDOUT_FILENO);
+      int devnull = open("/dev/null", O_RDWR);
+      dup2(devnull, STDOUT_FILENO);  // Replace standard out
+#endif
+      error = GRBloadenv(&env, NULL);
+#if defined(__linux__)
+      dup2(saved_stdout, STDOUT_FILENO);
+#endif
+    }
+  else
+    {
+      error = GRBloadenv(&env, NULL);
+    }
+  
   if (error) goto QUIT;
 
   error = GRBsetintparam(env, GRB_INT_PAR_OUTPUTFLAG, loglevel);
@@ -82,8 +100,19 @@ int nsp_gurobi_solve(const char* problemName, int sense, int ncols, int nrows, i
 		       lowerBounds, upperBounds,
 		       NULL, NULL, NULL);
   if (error) goto QUIT;
-      
-    
+
+
+  /* type of variables */
+  if (columnType) 
+    {
+      int i;
+      for (i = 0; i < colCount; i++)
+	{
+	  error = GRBsetcharattrelement(model, "VType", i, columnType[i]);
+	  if (error) goto QUIT;
+	}
+    }
+  
   /* solves the pb */
   error = GRBoptimize(model);
   if (error) goto QUIT;
@@ -95,6 +124,7 @@ int nsp_gurobi_solve(const char* problemName, int sense, int ncols, int nrows, i
   
   Retcode->R[0]= optimstatus;
 
+  /* 
   switch ( optimstatus )
     {
     case GRB_OPTIMAL:
@@ -106,7 +136,7 @@ int nsp_gurobi_solve(const char* problemName, int sense, int ncols, int nrows, i
     case GRB_UNBOUNDED:
       Sciprintf("Model is unbounded\n");break;
     }
-
+  */
   
   if (optimstatus == GRB_OPTIMAL)
     {
