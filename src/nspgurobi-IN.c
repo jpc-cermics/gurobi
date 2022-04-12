@@ -71,8 +71,8 @@ int int_gurobi_solve(Stack stack, int rhs, int opt, int lhs)
 	       &lb,&ub,&sense_str,&var_type,&Options,&SemiCont,&loglevel,&save_only,&filename) == FAIL) 
     return RET_BUG;
   /* 
-  if ( get_solver_options(stack, Options, &options) == FAIL )
-    return RET_BUG;
+     if ( get_solver_options(stack, Options, &options) == FAIL )
+     return RET_BUG;
   */
 
   /* optional argument sense : min or max default min */
@@ -214,7 +214,7 @@ int int_gurobi_solve(Stack stack, int rhs, int opt, int lhs)
       if (( lb =  nsp_matrix_create(NVOID,'r',1,ncols)) == NULL)
 	return RET_BUG;
       for (i = 0; i < ncols; i++){
-	lb->R[i] = 0; /* to fit with glpk - gurobi_dbl_max; */
+	lb->R[i] = 0; /* to fit with glpk we use 0 by default */
       }
       lb_local = TRUE;
     }

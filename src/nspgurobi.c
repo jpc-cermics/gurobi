@@ -113,6 +113,26 @@ int nsp_gurobi_solve(const char* problemName, int sense, int ncols, int nrows, i
 	}
     }
   
+  if ( Qmatbeg != NULL ) 
+    {
+      /* we have a quadratic cost */
+      int qrow, qcol, offset=0 ;
+      double qval;
+      for ( qcol = 0 ; qcol < Qmatcnt->mn ; qcol++)
+	{
+	  /* we add column k */
+	  int i;
+	  for ( i = 0 ; i < Qmatcnt->Gint[qcol] ; i++)
+	    {
+	      qrow = Qmatind->Gint[i+offset];
+	      qval = Qmatval->R[i+offset];
+	      error = GRBaddqpterms(model, 1, &qrow, &qcol, &qval);
+	      if (error) goto QUIT;
+	    }
+	  offset += Qmatcnt->Gint[qcol];
+	}
+    }
+  
   /* solves the pb */
   error = GRBoptimize(model);
   if (error) goto QUIT;
