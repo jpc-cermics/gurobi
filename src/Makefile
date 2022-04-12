@@ -1,7 +1,6 @@
 SHELL = /bin/sh
 
-SCIDIR=../../..
-SCIDIR1=..\..\..
+include ../Path.incl
 
 LIBRARY=libgurobi.a
 
@@ -24,12 +23,6 @@ OTHERLIBS=$(GUROBI_LIB)
 include $(SCIDIR)/config/Makeso.incl
 
 all:: Makefile.mak
-
-Makefile.mak	: Makefile
-	$(SCIDIR)/scripts/Mak2VCMak Makefile
-
-Makefile.amk	: Makefile
-	$(SCIDIR)/scripts/Mak2ABSMak Makefile
 
 distclean:: clean 
 

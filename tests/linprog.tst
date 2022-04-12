@@ -15,8 +15,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-load_toolbox('nspgurobi');
-
 /////////////////////////////////////////////////////////////////////////////////
 // test 1-1:   max c'*x
 //             Ax <= b
@@ -44,8 +42,9 @@ if abs((dot(lambda,b)-fopt)/fopt) >= 4*%eps then, pause, end
 A= [-1 -1; -1 2; -2 1];
 b=[-3; -5; 5];
 c=[1; 3];
-ok=execstr('[xopt,fopt,flag] = linprog_gurobi(c,A,b,[],[],sense=""max"");',errcatch=%t);
-if ok then pause;else lasterror();end 
+[xopt,fopt,flag] = linprog_gurobi(c,A,b,[],[],sense="max");
+if flag <> 4 then pause;end
+if fopt <> -%inf then pause;end
 
 //////////////////////////////////////////////////////////////////////////////
 // tests on easy mips (from netlib)
@@ -53,19 +52,19 @@ if ok then pause;else lasterror();end
 // bal8x12.mps is a mip with x >= 0 (no need to provide lb=0)
 [c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] = readlp("NSP/tests/bal8x12.mps",verb=0);
 Fe = 471.55; 
-[xopt,fopt,flag] = linprog_cplex(c,A,b,Ae,be,ub=ub,var_type=var_type);
+[xopt,fopt,flag] = linprog_gurobi(c,A,b,Ae,be,ub=ub,var_type=var_type);
 if abs((fopt-Fe)/Fe) >= 4*%eps then, pause, end
 
 // gr4x6.mps is a mip with x >= 0 (no need to provide lb=0)
 [c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] = readlp("NSP/tests/gr4x6.mps",verb=0);
 Fe = 202.35; 
-[xopt,fopt,flag] = linprog_cplex(c,A,b,Ae,be,ub=ub,var_type=var_type);
+[xopt,fopt,flag] = linprog_gurobi(c,A,b,Ae,be,ub=ub,var_type=var_type);
 if abs((fopt-Fe)/Fe) >= 4*%eps then, pause, end
 
 // bk4x3.mps is a mip with x >= 0 (no need to provide lb=0)
 [c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] = readlp("NSP/tests/bk4x3.mps",verb=0);
 Fe = 350.0; 
-[xopt,fopt,flag] = linprog_cplex(c,A,b,Ae,be,ub=ub,var_type=var_type);
+[xopt,fopt,flag] = linprog_gurobi(c,A,b,Ae,be,ub=ub,var_type=var_type);
 if abs((fopt-Fe)/Fe) >= 4*%eps then, pause, end
 
 
@@ -80,7 +79,7 @@ if abs((fopt-Fe)/Fe) >= 4*%eps then, pause, end
 //      Bounds
 //       0 <= x1 <= 40
 //      End
-// this is a test case of cplex 
+// this is a test case of gurobi 
 
 c=[1,2,3];
 A=sparse([-1,1,1;1,-3,1]);
@@ -97,7 +96,7 @@ sol= 2.015617;
 xopt=[0.139115;0.598465;0.898396];
 lambda=[18.642254;30.757886];
 
-[xopt1,fopt1,flag1,lambda1] = linprog_cplex(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max",Q=Q);
+[xopt1,fopt1,flag1,lambda1] = linprog_gurobi(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max",Q=Q);
 
 if (fopt1- 2.015617) > 1.e-5 then pause;end
 if norm(xopt1-xopt1) > 1.e-5 then pause;end

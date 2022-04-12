@@ -17,8 +17,6 @@
 //
 // a set of examples compared with linprog 
 
-load_toolbox('nspgurobi');
-
 // XXX
 // [xopt1,fopt1,flag1,extra1] = linprog_gurobi(10,-1,0,[],[],sense="max");
 // // model is infinite or unbounded

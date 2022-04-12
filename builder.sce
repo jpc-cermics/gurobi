@@ -2,10 +2,10 @@
 
 libname='nspgurobi'
 
-// generate Path.incl file 
-// -----------------------
+// generate Path.incl file with relative path to nsp
+// ------------------------------------------------
 
-ilib_path_incl()
+ilib_path_incl(relative=%f)
 
 // compile shared library in src.
 // ------------------------------

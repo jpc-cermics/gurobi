@@ -1,7 +1,7 @@
 SHELL=/bin/csh
 .SUFFIXES: .dia .tst .vl
 
-SCIDIR=../../../
+include ../Path.incl
 
 TESTS= linprog.dia examples.dia
 
@@ -19,7 +19,7 @@ tests: all
 
 .tst.dia :
 	@echo -n "testing $*: "
-	@$(SCIDIR)/bin/nsp -nw -e "nsptest('$*.tst');quit" 
+	@$(SCIDIR)/bin/nsp -nw -ns -e "exec('../loader.sce');nsptest('$*.tst');quit" 
 
 #export G_DEBUG=gc-friendly;export G_SLICE=always-malloc;valgrind --suppressions=tests/valgrind.supp --leak-check=full  bin/scilex -nw 
 
