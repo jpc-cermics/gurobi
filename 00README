@@ -8,3 +8,9 @@ GUROBILIB=-lgurobi95
 jpc (2022)
 
 
+Il faut remplir le vecteur qui donne les directions pour rhs = > ou <
+Il faut récupérer les solutions
+Il faut rajouter la quadratique au besoin
+
+
+
