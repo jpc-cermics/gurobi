@@ -1,0 +1,8 @@
+Path.incl
+*.bin
+.libs
+*.o
+*.lo
+*.a
+*.la
+*.so

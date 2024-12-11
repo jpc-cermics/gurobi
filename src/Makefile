@@ -4,8 +4,8 @@ include ../Path.incl
 
 LIBRARY=libgurobi.a
 
-GUROBI=/home/jpc/gurobi951/linux64
-GUROBILIB=-lgurobi95
+GUROBI=/home/jpc/gurobi1200/linux64
+GUROBILIB=-lgurobi120
 
 GUROBI_INC= -I $(GUROBI)/include 
 GUROBI_LIB= -L$(GUROBI)/lib -Wl,-R$(GUROBI)/lib $(GUROBILIB)
