@@ -2,15 +2,11 @@ Interface to gurobi linear and quadratic programming
 You need to fill in src/Makefile the two variables with
 your version of gurobi
 
-GUROBI=/home/jpc/gurobi951/linux64
-GUROBILIB=-lgurobi95
+GUROBI=/home/jpc/gurobi1201/linux64
+GUROBILIB=-lgurobi120
 
-jpc (2022)
+jpc (2025)
 
-
-Il faut remplir le vecteur qui donne les directions pour rhs = > ou <
-Il faut récupérer les solutions
-Il faut rajouter la quadratique au besoin
 
 
 
